@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-import index from '../data/instruments/stringInstruments/index.json';
+import instrumentIndex from '../data/instruments/stringInstruments/index.json';
 
 /**
  * String instrument data handler
@@ -35,7 +35,16 @@ export class StringInstrumentData {
     }
 
     query(options) {
+        if(options.instrument) {
+            const instrument = this.normalize(string);
+            instrumentIndex.forEach(current => {
+                
+            });
+        }
+    }
 
+    normalize(string) {
+        return string.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     }
 
 }
