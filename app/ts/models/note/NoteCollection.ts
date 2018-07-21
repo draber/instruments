@@ -24,10 +24,21 @@ import Note from './Note';
 
 export default class NoteCollection {
     
+    /**
+     * NoteCollection constructor
+     * `NoteCollection` in this context could be a scale, a tuning or a chord for instance
+     * 
+     * @param {String} note 
+     */
     constructor(collection: string[]|string[][]){
     }
 
-    public static createFromRange(startNote: string, endNote: string) {
+    /**
+     * Create an array of notes from a range whaich can be used in the NoteCollection constructor
+     * 
+     * @param {String} note 
+     */
+    public static createFromRange(startNote: string, endNote: string): string[] {
         const startObj: Note  = new Note(startNote);
         const endObj: Note    = new Note(endNote);
         const octaves: number = endObj.octave - startObj.octave + 1;
@@ -41,5 +52,20 @@ export default class NoteCollection {
         //     scale = scale.concat(sharp);
         // }
         // console.log(scale, octaves, startObj,endObj);
+
+        return []
+    }
+
+
+    /**
+     * Create an array of a base note and a note in a certain distance from `startNote`
+     * 
+     * @param {String} note 
+     * @return {Array}
+     */
+    public static createFromCounter(startNote: string, count: number): string[] {
+        // get the note with the distance of `number`
+        // const endNote: string    = ...
+        return NoteCollection.createFromRange(startNote, endNote);
     }
 }

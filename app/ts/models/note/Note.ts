@@ -56,6 +56,11 @@ export default class Note {
     private _scale: string;
    
 
+    /**
+     * Note constructor
+     * 
+     * @param {String} note 
+     */
     constructor(note: string){
 
         const data = this.getNoteData(note);
@@ -70,9 +75,8 @@ export default class Note {
     /**
      * Attempt to extract note data as plain object
      * 
-     * @see https://en.wikipedia.org/wiki/Scientific_pitch_notation
-     * @see https://en.wikipedia.org/wiki/Helmholtz_pitch_notation
-     * @param note 
+     * @param {String} note 
+     * @return {Object|null}
      */
     private getNoteData(note: string): { position: number, octave: number, scale: string }|null {
 
@@ -83,14 +87,17 @@ export default class Note {
 
         // try to convert to SPN
         note = this.normalize(note);
-
         return this.parseSpn(note);
     }
 
     /**
-     * Convert various notation formats into Scientific Pitch Notation (SPN). No support for input in Helmholtz Notation!
-     * 
-     * @param note 
+     * Convert various notation formats into Scientific Pitch Notation (SPN). 
+     * No support for input in Helmholtz Notation as this could lead to ambiguity!
+
+     * @see https://en.wikipedia.org/wiki/Scientific_pitch_notation
+     * @see https://en.wikipedia.org/wiki/Helmholtz_pitch_notation 
+     * @param {String} note 
+     * @return {String}
      */
     private normalize(note: string): string { 
         
@@ -135,11 +142,13 @@ export default class Note {
 
     /**
      * Test if a note is already in the SPN format and return its data if so
-     * @param note 
+     * @param {String} note 
+     * @return {Object|null}
      */
     private parseSpn(note: string): { position: number, octave: number, scale: string }|null {        
 
         // expected ['A♯₆','A♯','A','♯','₆']
+        // @todo support neagtive octaves
         const data: string[]|null = note.match(/^([A-G])(♭|♯)?([₀₁₂₃₄₅₆₇₈₉]+)$/);
 
         if(null === data){
@@ -164,11 +173,17 @@ export default class Note {
         return null;
     }
 
-    // @todo test maths
-    public noteAtInterval (interval: number):Note {
-        const scale: string[]  = this._scales[this._scale];
-        const position: number = (this._position + interval) % scale.length;
-        const octave: number   = this._octave + Math.floor(this._position + interval / scale.length);
+
+    /**
+     * Build a new note based on an interval
+     * @todo test maths
+     * @param {Number} interval 
+     * @return {Note}
+     */
+    public noteAtInterval (interval: number): Note {
+        const scale:    string[] = this._scales[this._scale];
+        const position: number   = (this._position + interval) % scale.length;
+        const octave:   number   = this._octave + Math.floor(this._position + interval / scale.length);
         
         return new Note(scale[position] + this._octaves[octave]);
     }
@@ -176,30 +191,34 @@ export default class Note {
 
     /**
      * Retrieve the full name of the note with octave
+     * @return {String}
      */
-    public get canonical ():string {
+    public get canonical (): string {
         return this._scales[this._scale][this._position] + this._octaves[this._octave];
     }
     
 
     /**
      * Retrieve the note name
+     * @return {String}
      */
-    public get name ():string {
+    public get name (): string {
         return this._scales[this._scale][this._position];
     }
 
     /**
      * Retrieve the octave as a integer value
+     * @return {Int}
      */
-    public get octave ():number {
+    public get octave (): number {
         return this._octave;
     }
 
     /**
      * Retrieve the frequency as a float value
+     * @return {Float}
      */
-    public get frequency ():number {
+    public get frequency (): number {
         const baseFrequency: number = this._frequencies[this.name];
         return baseFrequency * Math.pow(2, this.octave);
     }
