@@ -20,23 +20,25 @@
  * SOFTWARE.
  */
 
-import index from '../data/instruments/stringInstruments/index.json';
+import Note from '../note/Note';
 
-/**
- * String instrument data handler
- *
- * @export
- * @class StringInstrumentData
- */
-export class StringInstrumentData {
+export default class Sound {
 
-    constructor(data) {
-        const self   = this;
+    private _audioContext: AudioContext;
+    private _oscillator: OscillatorNode;    
+
+    constructor(note: Note) {
+        this._audioContext = new AudioContext();
+        this._oscillator = this._audioContext.createOscillator();
+        this._oscillator.frequency.value = note.frequency;
     }
 
-    query(options) {
-
+    public play():void {
+        this._oscillator.connect(this._audioContext.destination);
+        this._oscillator.start();
     }
 
+    public stop():void {
+        this._oscillator.stop();
+    }
 }
-
