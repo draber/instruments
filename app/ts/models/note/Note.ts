@@ -61,8 +61,7 @@ export default class Note {
      * 
      * @param {String} note 
      */
-    constructor(note: string){
-
+    constructor(note: string|Note){
         const data = this.getNoteData(note);
         if(null === data){
             throw new TypeError (note + ' is in an unknown format');
@@ -70,6 +69,7 @@ export default class Note {
         this._position = data.position;
         this._octave   = data.octave;
         this._scale    = data.scale;
+
     }
 
     /**
@@ -78,7 +78,15 @@ export default class Note {
      * @param {String} note 
      * @return {Object|null}
      */
-    private getNoteData(note: string): { position: number, octave: number, scale: string }|null {
+    private getNoteData(note: string|Note): { position: number, octave: number, scale: string }|null {
+
+        if(note instanceof Note){
+            return {
+                position: Note.position,
+                octave: Note.octave,
+                scale: Note.scale
+            }
+        }
 
         let data = this.parseSpn(note);
         if(null !== data) {
@@ -212,6 +220,22 @@ export default class Note {
      */
     public get octave (): number {
         return this._octave;
+    }
+
+    /**
+     * Retrieve the position inside a scale array as a integer value
+     * @return {Int}
+     */
+    public get position (): number {
+        return this._position;
+    }
+
+    /**
+     * Retrieve the name of the scale, either flat or sharp
+     * @return {String}
+     */
+    public get scale (): string {
+        return this._scale;
     }
 
     /**

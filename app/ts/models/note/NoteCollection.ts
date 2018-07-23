@@ -22,6 +22,24 @@
 
 import Note from './Note';
 
+interface NoteArray {
+    collection: string[]
+}
+
+interface NoteNestedArray {
+    collection: string[][]
+}
+
+interface NoteRange {
+    startNote: string,
+    endNote: string
+}
+
+interface NoteCount {
+    startNote: string,
+    count: number
+}
+
 export default class NoteCollection {
     
     /**
@@ -30,7 +48,10 @@ export default class NoteCollection {
      * 
      * @param {String} note 
      */
-    constructor(collection: string[]|string[][]){
+    constructor(collectionData: NoteArray|NoteNestedArray|NoteRange|NoteCount){
+        if(collectionData instanceof NoteArray) {
+            
+        }
     }
 
     /**
