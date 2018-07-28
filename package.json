@@ -1,0 +1,26 @@
+{
+  "name": "instruments",
+  "version": "1.0.0",
+  "description": "Library for music stuff",
+  "main": "index.js",
+  "dependencies": {
+    "chai": "^4.1.2",
+    "ts-node": "^7.0.0"
+  },
+  "devDependencies": {
+    "mocha": "^5.2.0"
+  },
+  "scripts": {
+    "test": "mocha --reporter spec --compilers ts:ts-node/register 'tests/**/*.test.ts'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/draber/instruments.git"
+  },
+  "author": "Dieter Raber",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/draber/instruments/issues"
+  },
+  "homepage": "https://github.com/draber/instruments#readme"
+}

@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
- 
+
 import scales from './Scales';
 
 export default class Note {
@@ -45,28 +45,28 @@ export default class Note {
         'B': 30.87
     };
 
-    private _octaves: string[] = ['₀','₁','₂','₃','₄','₅','₆','₇','₈','₉'];
+    private _octaves: string[] = ['₀', '₁', '₂', '₃', '₄', '₅', '₆', '₇', '₈', '₉'];
 
     private _position: number;
 
     private _octave: number;
 
     private _scale: string;
-   
+
 
     /**
      * Note constructor
      * 
      * @param {String} note 
      */
-    constructor(note: string|Note){
+    constructor(note: string | Note) {
         const data = this.getNoteData(note);
-        if(null === data){
-            throw new TypeError (note + ' is in an unknown format');
+        if (null === data) {
+            throw new TypeError(note + ' is in an unknown format');
         }
         this._position = data.position;
-        this._octave   = data.octave;
-        this._scale    = data.scale;
+        this._octave = data.octave;
+        this._scale = data.scale;
 
     }
 
@@ -76,9 +76,9 @@ export default class Note {
      * @param {String} note 
      * @return {Object|null}
      */
-    private getNoteData(note: string|Note): { position: number, octave: number, scale: string }|null {
+    private getNoteData(note: string | Note): { position: number, octave: number, scale: string } | null {
 
-        if(note instanceof Note){
+        if (note instanceof Note) {
             return {
                 position: Note.position,
                 octave: Note.octave,
@@ -87,7 +87,7 @@ export default class Note {
         }
 
         let data = this.parseSpn(note);
-        if(null !== data) {
+        if (null !== data) {
             return data;
         }
 
@@ -105,8 +105,8 @@ export default class Note {
      * @param {String} note 
      * @return {String}
      */
-    private normalize(note: string): string { 
-        
+    private normalize(note: string): string {
+
         const self: Note = this;
 
         // convert to SPN, first attempt
@@ -129,14 +129,14 @@ export default class Note {
             .replace(/^es/i, 'E♭')
 
             // accidentals
-            .replace(/(^[a-gA-G])\s*(#|is)/i,'$1♯')
-            .replace(/(^[a-gA-G])\s*(b|es)/i,'$1♭')
+            .replace(/(^[a-gA-G])\s*(#|is)/i, '$1♯')
+            .replace(/(^[a-gA-G])\s*(b|es)/i, '$1♭')
 
             // whitespace
-            .replace(/\s+/,'')
+            .replace(/\s+/, '')
 
             // octaves
-            .replace(/((1)|(2)|(3)|(4)|(5)|(6)|(7)|(8)|(9)|(0))/g, function(match, digit) {
+            .replace(/((1)|(2)|(3)|(4)|(5)|(6)|(7)|(8)|(9)|(0))/g, function (match, digit) {
                 return self._octaves[digit]
             })
 
@@ -151,20 +151,20 @@ export default class Note {
      * @param {String} note 
      * @return {Object|null}
      */
-    private parseSpn(note: string): { position: number, octave: number, scale: string }|null {        
+    private parseSpn(note: string): { position: number, octave: number, scale: string } | null {
 
         // expected ['A♯₆','A♯','A','♯','₆']
         // @todo support neagtive octaves
-        const data: string[]|null = note.match(/^([A-G])(♭|♯)?([₀₁₂₃₄₅₆₇₈₉]+)$/);
+        const data: string[] | null = note.match(/^([A-G])(♭|♯)?([₀₁₂₃₄₅₆₇₈₉]+)$/);
 
-        if(null === data){
+        if (null === data) {
             return null;
         }
-        
+
         note = data[1] + (data[2] || '');
 
         // note already in SPN
-        if(data && data.length){
+        if (data && data.length) {
             const scale: string = data[3] === '♭' ? 'flat' : 'sharp';
             let octave: string = '';
             data[4].split('').forEach(sub => {
@@ -182,41 +182,43 @@ export default class Note {
 
     /**
      * Build a new note based on an interval
-     * @todo test maths
      * @param {Number} interval 
      * @return {Note}
      */
-    public noteAtInterval (interval: number): Note {
-        const scale:    string[] = scales[this._scale];
-        const position: number   = (this._position + interval) % scale.length;
-        const octave:   number   = this._octave + Math.floor(this._position + interval / scale.length);
-        
+    public noteAtInterval(interval: number): Note {
+        const scale: string[] = scales[this._scale];
+        const octave: number = this._octave + Math.floor((this._position + interval) / scale.length);
+        let position: number = (this._position + interval) % scale.length;
+        if(position < 0) {
+            position += scale.length;
+        }
+
         return new Note(scale[position] + this._octaves[octave]);
     }
 
-        /**
-     * Build a new note based on an interval
-     * @todo add code
+    /**
+     * Calculate the interval between two notes
+     * @param {Note} note 
      */
-    public intervalAtNote (Note: Note): number {
+    public intervalAtNote(note: Note): number {
         return 5;
     }
-    
+
 
     /**
      * Retrieve the full name of the note with octave
      * @return {String}
      */
-    public get canonical (): string {
+    public get canonical(): string {
         return scales[this._scale][this._position] + this._octaves[this._octave];
     }
-    
+
 
     /**
      * Retrieve the note name
      * @return {String}
      */
-    public get name (): string {
+    public get name(): string {
         return scales[this._scale][this._position];
     }
 
@@ -224,7 +226,7 @@ export default class Note {
      * Retrieve the octave as a integer value
      * @return {Int}
      */
-    public get octave (): number {
+    public get octave(): number {
         return this._octave;
     }
 
@@ -232,7 +234,7 @@ export default class Note {
      * Retrieve the position inside a scale array as a integer value
      * @return {Int}
      */
-    public get position (): number {
+    public get position(): number {
         return this._position;
     }
 
@@ -240,7 +242,7 @@ export default class Note {
      * Retrieve the name of the scale, either flat or sharp
      * @return {String}
      */
-    public get scale (): string {
+    public get scale(): string {
         return this._scale;
     }
 
@@ -248,7 +250,7 @@ export default class Note {
      * Retrieve the frequency as a float value
      * @return {Float}
      */
-    public get frequency (): number {
+    public get frequency(): number {
         const baseFrequency: number = this._frequencies[this.name];
         return baseFrequency * Math.pow(2, this.octave);
     }

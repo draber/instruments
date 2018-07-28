@@ -22,12 +22,12 @@
 
 import Note from './Note';
 
-interface NoteAsRange {
+export interface NoteAsRange {
     startNote: string|Note,
     endNote: string
 }
 
-interface NoteAsCount {
+export interface NoteAsCount {
     startNote: string|Note,
     count: number
 }

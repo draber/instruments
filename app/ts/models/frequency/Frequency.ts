@@ -52,7 +52,7 @@ export default class Frequency {
      */
     constructor(a4?: number){
         this.a4 = typeof a4 !== 'undefined' ? a4 : 440;
-        this._frequencies ....
+        //this._frequencies ....
     }
 
 
@@ -62,6 +62,7 @@ export default class Frequency {
      */
     public get frequency (): number {
         const baseFrequency: number = this._frequencies[this.name];
-        return baseFrequency * Math.pow(2, this.octave);
+        return 42;
+        //return baseFrequency * Math.pow(2, this.octave);
     }
 }
