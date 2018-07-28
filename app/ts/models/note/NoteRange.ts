@@ -20,14 +20,49 @@
  * SOFTWARE.
  */
 
-export interface NoteRange {
-    __dataType: 'NoteRange',
-    startNote: string,
+import Note from './Note';
+
+interface NoteAsRange {
+    startNote: string|Note,
     endNote: string
 }
 
-export interface NoteCount {
-    __dataType: 'NoteCount',
-    startNote: string,
+interface NoteAsCount {
+    startNote: string|Note,
     count: number
+}
+
+export default class NoteRange {
+
+    private _startNote: Note;
+
+    private _count: number;
+
+    /**
+     * NoteRange constructor
+     * 
+     * @param {String} note 
+     */
+    constructor(values: NoteAsRange|NoteAsCount){
+        this._startNote = new Note(values.startNote);
+        if((<NoteAsCount>values).count) {
+            this._count = (<NoteAsCount>values).count;
+        }
+        else if((<NoteAsRange>values).endNote) {
+            const endNote = new Note((<NoteAsRange>values).endNote);
+            this._count = this._startNote.intervalAtNote(endNote);
+        }
+        else {
+            this._count = 0;
+        }
+    }
+
+    get range (): Note[] {
+        let _range = [this._startNote];
+        let i = this._startNote.position;
+        for(; i < this._count; i++){
+            _range.push(this._startNote.noteAtInterval(i));
+        }
+        return _range; 
+    }
 }

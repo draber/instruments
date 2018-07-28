@@ -21,24 +21,8 @@
  */
 
 import Note from './Note';
-
-interface NoteArray {
-    collection: string[]
-}
-
-interface NoteNestedArray {
-    collection: string[][]
-}
-
-interface NoteRange {
-    startNote: string,
-    endNote: string
-}
-
-interface NoteCount {
-    startNote: string,
-    count: number
-}
+import { NoteRange } from'./NoteInterfaces';
+import { NoteCount } from'./NoteInterfaces';
 
 export default class NoteCollection {
     
@@ -48,10 +32,24 @@ export default class NoteCollection {
      * 
      * @param {String} note 
      */
-    constructor(collectionData: NoteArray|NoteNestedArray|NoteRange|NoteCount){
-        if(collectionData instanceof NoteArray) {
-            
+    constructor(collectionData: Note[]|Note[][]|NoteRange|NoteCount){
+        let data: Note[]|Note[][] = collectionData;
+        if(!Array.isArray(collectionData) && collectionData.__dataType) {
+            if(collectionData.__dataType === 'NoteRange'){
+                data = this.createFromRange(collectionData);
+            }
+            else if(collectionData.__dataType === 'NoteCount'){
+                data = this.createFromCount(collectionData);
+            }
         }
+        data.forEach(entry: Note|string|Note[]|string[] => {
+            if(!Array.isArray(entry)){
+
+            }
+            else {
+                
+            }
+        });
     }
 
     /**
@@ -59,9 +57,9 @@ export default class NoteCollection {
      * 
      * @param {String} note 
      */
-    public static createFromRange(startNote: string, endNote: string): string[] {
-        const startObj: Note  = new Note(startNote);
-        const endObj: Note    = new Note(endNote);
+    private createFromRange(noteRange: NoteRange): string[] {
+        const startObj: Note  = new Note(noteRange.startNote);
+        const endObj: Note    = new Note(noteRange.endNote);
         const octaves: number = endObj.octave - startObj.octave + 1;
 
         // var sharp = ['C','C♯','D','D♯','E','F','F♯','G','G♯','A','A♯','B'];
@@ -84,9 +82,14 @@ export default class NoteCollection {
      * @param {String} note 
      * @return {Array}
      */
-    public static createFromCounter(startNote: string, count: number): string[] {
+    private createFromCount(noteCount: NoteCount): string[] {
+        const startObj: Note  = new Note(noteCount.startNote);
         // get the note with the distance of `number`
         // const endNote: string    = ...
-        return NoteCollection.createFromRange(startNote, endNote);
+        return this.createFromRange({
+            __dataType: 'NoteRange',
+            startNote: noteCount.startNote,
+            endNote: (startObj.noteAtInterval(noteCount.count)).canonical
+        });
     }
 }

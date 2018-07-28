@@ -20,12 +20,10 @@
  * SOFTWARE.
  */
 
-export default class Note {
+ 
+import scales from './Scales';
 
-    private _scales : { [key: string]: string[] } = {
-        sharp:    ['C','C♯','D','D♯','E','F','F♯','G','G♯','A','A♯','B'],
-        flat:     ['C','D♭','D','E♭','E','F','G♭','G','A♭','A','B♭','B']
-    };
+export default class Note {
 
     private _frequencies: { [key: string]: number } = {
         'C': 16.35,
@@ -173,7 +171,7 @@ export default class Note {
                 octave += this._octaves.indexOf(sub).toString();
             })
             return {
-                position: this._scales[scale].indexOf(note),
+                position: scales[scale].indexOf(note),
                 octave: parseInt(octave, 10),
                 scale: scale
             }
@@ -189,11 +187,19 @@ export default class Note {
      * @return {Note}
      */
     public noteAtInterval (interval: number): Note {
-        const scale:    string[] = this._scales[this._scale];
+        const scale:    string[] = scales[this._scale];
         const position: number   = (this._position + interval) % scale.length;
         const octave:   number   = this._octave + Math.floor(this._position + interval / scale.length);
         
         return new Note(scale[position] + this._octaves[octave]);
+    }
+
+        /**
+     * Build a new note based on an interval
+     * @todo add code
+     */
+    public intervalAtNote (Note: Note): number {
+        return 5;
     }
     
 
@@ -202,7 +208,7 @@ export default class Note {
      * @return {String}
      */
     public get canonical (): string {
-        return this._scales[this._scale][this._position] + this._octaves[this._octave];
+        return scales[this._scale][this._position] + this._octaves[this._octave];
     }
     
 
@@ -211,7 +217,7 @@ export default class Note {
      * @return {String}
      */
     public get name (): string {
-        return this._scales[this._scale][this._position];
+        return scales[this._scale][this._position];
     }
 
     /**

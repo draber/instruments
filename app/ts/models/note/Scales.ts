@@ -20,14 +20,9 @@
  * SOFTWARE.
  */
 
-export interface NoteRange {
-    __dataType: 'NoteRange',
-    startNote: string,
-    endNote: string
-}
+const scales : { [key: string]: string[] } = {
+    sharp:    ['C','C♯','D','D♯','E','F','F♯','G','G♯','A','A♯','B'],
+    flat:     ['C','D♭','D','E♭','E','F','G♭','G','A♭','A','B♭','B']
+};
 
-export interface NoteCount {
-    __dataType: 'NoteCount',
-    startNote: string,
-    count: number
-}
+export default scales;
