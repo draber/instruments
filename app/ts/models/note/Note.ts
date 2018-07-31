@@ -21,45 +21,45 @@
  */
 
 
-import scales from './Scales';
+interface options {
+    a4?: number
+}
 
 export default class Note {
 
-    private _frequencies: { [key: string]: number } = {
-        'C': 16.35,
-        'C♯': 17.32,
-        'D♭': 17.32,
-        'D': 18.35,
-        'D♯': 19.45,
-        'E♭': 19.45,
-        'E': 20.60,
-        'F': 21.83,
-        'F♯': 23.12,
-        'G♭': 23.12,
-        'G': 24.50,
-        'G♯': 25.96,
-        'A♭': 25.96,
-        'A': 27.50,
-        'A♯': 29.14,
-        'B♭': 29.14,
-        'B': 30.87
+    private _scales : { [key: string]: string[] } = {
+        sharp:    ['C','C♯','D','D♯','E','F','F♯','G','G♯','A','A♯','B'],
+        flat:     ['C','D♭','D','E♭','E','F','G♭','G','A♭','A','B♭','B']
     };
 
     private _octaves: string[] = ['₀', '₁', '₂', '₃', '₄', '₅', '₆', '₇', '₈', '₉'];
 
+    /**
+     * Position of a note in a certain scale
+     */
     private _position: number;
 
+    /**
+     * Octave of the note
+     */
     private _octave: number;
 
+    /**
+     * Scale, either sharp or flat
+     */
     private _scale: string;
 
+    /**
+     * Options, see interface
+     */
+    private _options: options;    
 
     /**
      * Note constructor
      * 
      * @param {String} note 
      */
-    constructor(note: string | Note) {
+    constructor(note: string | Note,  options?: options) {
         const data = this.getNoteData(note);
         if (null === data) {
             throw new TypeError(note + ' is in an unknown format');
@@ -68,6 +68,8 @@ export default class Note {
         this._octave = data.octave;
         this._scale = data.scale;
 
+        const defaultOptions:options = {}
+        this._options = {...defaultOptions, ...options};
     }
 
     /**
@@ -80,9 +82,9 @@ export default class Note {
 
         if (note instanceof Note) {
             return {
-                position: Note.position,
-                octave: Note.octave,
-                scale: Note.scale
+                position: note.position,
+                octave: note.octave,
+                scale: note.scale
             }
         }
 
@@ -154,7 +156,7 @@ export default class Note {
     private parseSpn(note: string): { position: number, octave: number, scale: string } | null {
 
         // expected ['A♯₆','A♯','A','♯','₆']
-        // @todo support neagtive octaves
+        // @todo support negative octaves
         const data: string[] | null = note.match(/^([A-G])(♭|♯)?([₀₁₂₃₄₅₆₇₈₉]+)$/);
 
         if (null === data) {
@@ -171,7 +173,7 @@ export default class Note {
                 octave += this._octaves.indexOf(sub).toString();
             })
             return {
-                position: scales[scale].indexOf(note),
+                position: this._scales[scale].indexOf(note),
                 octave: parseInt(octave, 10),
                 scale: scale
             }
@@ -186,7 +188,7 @@ export default class Note {
      * @return {Note}
      */
     public noteAtInterval(interval: number): Note {
-        const scale: string[] = scales[this._scale];
+        const scale: string[] = this._scales[this._scale];
         const octave: number = this._octave + Math.floor((this._position + interval) / scale.length);
         let position: number = (this._position + interval) % scale.length;
         if(position < 0) {
@@ -201,7 +203,8 @@ export default class Note {
      * @param {Note} note 
      */
     public intervalAtNote(note: Note): number {
-        return 5;
+        const scaleLength: number = this._scales[this._scale].length;
+        return ((note.octave * scaleLength) + note.position) - ((this._octave * scaleLength) + this._position);
     }
 
 
@@ -210,7 +213,7 @@ export default class Note {
      * @return {String}
      */
     public get canonical(): string {
-        return scales[this._scale][this._position] + this._octaves[this._octave];
+        return this._scales[this._scale][this._position] + this._octaves[this._octave];
     }
 
 
@@ -219,7 +222,7 @@ export default class Note {
      * @return {String}
      */
     public get name(): string {
-        return scales[this._scale][this._position];
+        return this._scales[this._scale][this._position];
     }
 
     /**
@@ -251,7 +254,14 @@ export default class Note {
      * @return {Float}
      */
     public get frequency(): number {
-        const baseFrequency: number = this._frequencies[this.name];
-        return baseFrequency * Math.pow(2, this.octave);
+        const scaleLength: number = this._scales[this._scale].length;
+
+        // base tone is A in the 4th octave
+        // A is the 9th tone of the scale 
+        const aPosition: number = 9;
+        const aOctave: number   = 4;       
+        const distance: number  = ((this._octave * scaleLength) + this._position) - ((aOctave * scaleLength) + aPosition);
+        
+        return this._options.a4 || 440 *  Math.pow(2, distance/12); 
     }
 }

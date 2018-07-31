@@ -26,7 +26,6 @@ export interface NoteAsRange {
     startNote: string|Note,
     endNote: string
 }
-
 export interface NoteAsCount {
     startNote: string|Note,
     count: number

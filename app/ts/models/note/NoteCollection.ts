@@ -34,7 +34,8 @@ export default class NoteCollection {
      * @param {String} note 
      */
     constructor(inputData: string[] | string[][] | Note[] | Note[][] | NoteAsRange | NoteAsCount | NoteRange) {
-        // string[]|string[][]|Note[]|Note[][]
+        let collection = [];
+
         if (Array.isArray(inputData)) {
             let collection = this._convertToNotes(inputData);
         }  
@@ -50,7 +51,13 @@ export default class NoteCollection {
         }
     }
 
-    private _convertToNotes(rawCollection: Note[] | string[] | Note[][] | string[][]) {
+    /**
+     * 
+     * @param rawCollection 
+     * 
+     * @todo type checking
+     */
+    private _convertToNotes(rawCollection:any) {
         let collection = [], 
             iR = 0,
             lR = rawCollection.length;
@@ -59,12 +66,7 @@ export default class NoteCollection {
             if (Array.isArray(rawCollection[iR])) {
                 let _data = [], iD = 0, lD = rawCollection[iR].length; 
                 for(iD = 0; iD < lD; iD++){                    
-                    if(rawCollection[iR][iD] instanceof Note){
-                        _data.push(rawCollection[iR][iD]);
-                    }
-                    else {
-                        _data.push(new Note(rawCollection[iR][iD]));
-                    }
+                    _data.push(new Note(rawCollection[iR][iD]));
                 }
                 collection.push(_data);
             }
@@ -72,9 +74,6 @@ export default class NoteCollection {
                 collection.push(new Note(rawCollection[iR]));
             }
         }
-
         return collection;
     }
-
-
 }

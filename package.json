@@ -5,13 +5,15 @@
   "main": "index.js",
   "dependencies": {
     "chai": "^4.1.2",
-    "ts-node": "^7.0.0"
+    "ts-node": "^7.0.0",
+    "typescript": "^3.0.1"
   },
   "devDependencies": {
-    "mocha": "^5.2.0"
+    "mocha": "^5.2.0",
+    "typescript-tools": "^0.3.1"
   },
   "scripts": {
-    "test": "mocha --reporter spec --compilers ts:ts-node/register 'tests/**/*.test.ts'"
+    "test": "mocha  ./app/tests/**/*.test.js"
   },
   "repository": {
     "type": "git",
