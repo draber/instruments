@@ -235,7 +235,7 @@ define(["require", "exports"], function (require, exports) {
                 var aPosition = 9;
                 var aOctave = 4;
                 var distance = ((this._octave * scaleLength) + this._position) - ((aOctave * scaleLength) + aPosition);
-                return this._options.a4 || 440 * Math.pow(2, distance / 12);
+                return (this._options.a4 || 440) * Math.pow(2, distance / 12);
             },
             enumerable: true,
             configurable: true
